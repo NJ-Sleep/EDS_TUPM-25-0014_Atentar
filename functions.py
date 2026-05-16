@@ -19,7 +19,7 @@ try:
         format='%d %m %Y %H:%M',
         errors='coerce'
     )
-    print("CSV file loaded successfully.")
+    print("CSV file loaded successfully")
 except Exception as e:
     print(f"Error loading CSV file: {e}")
     df = pd.DataFrame()  # Create empty DataFrame to prevent further errors
@@ -48,7 +48,7 @@ def csv_data_chunk(month=7):
         global month_name
         month_name = months[month - 1]
 
-        print(f"Data filtered for month {month_name} successfully.")
+        print(f"Data filtered for month {month_name} successfully")
 
     except Exception as e:
         print(f"Error filtering data by month: {e}")
@@ -75,6 +75,7 @@ def clean_data():
             # If text column → fill with mode
             else:
                 df[column] = df[column].fillna(df[column].mode()[0])
+        print("Missing/null values handled successfully")
     except Exception as e:
         print(f"Error handling missing/null values: {e}")
 
@@ -86,7 +87,7 @@ def clean_data():
 
     try:
         df = df.drop_duplicates()
-        print("Duplicate records removed.")
+        print("Duplicate records removed successfully")
     except Exception as e:
         print(f"Error removing duplicate records: {e}")
 
@@ -109,7 +110,7 @@ def clean_data():
                 # If many values successfully convert, replace column
                 if converted.notnull().sum() > len(df[column]) * 0.5:
                     df[column] = converted
-        print(f"Data filtered and cleaned successfully.")
+        print(f"Data filtered and cleaned successfully")
     except Exception as e:
         print(f"Error correcting corrupted data types: {e}")
 
@@ -144,7 +145,7 @@ def descriptive_statistics():
             ])
 
         fig, ax = plt.subplots(figsize=(6, 2.5))
-        plt.title("Descriptive Statistic of DataFrame")
+        plt.title(f"Descriptive Statistic of DataFrame for {month_name}", fontsize=12, pad=10)
         ax.axis("tight")
         ax.axis("off")
 
@@ -159,11 +160,11 @@ def descriptive_statistics():
         table.scale(1.6, 2)
 
         plt.savefig(
-            "outputs/Descriptive Statistic of DataFrame.png",
+            f"outputs/descriptive_statistic_of_dataframe_for_{month_name}.png",
             bbox_inches='tight',
         )
         plt.close()
-        print("Descriptive statistics generated and saved as 'Descriptive Statistic of DataFrame.png' in the 'outputs' folder.")
+        print(f"'descriptive_statistic_of_dataframe_for_{month_name}.png' created and saved in the 'outputs' folder.")
     except Exception as e:
         print(f"Error generating descriptive statistics: {e}")
 
@@ -183,16 +184,16 @@ def distribution_analysis():
             plt.figure(figsize=(6, 4))
             plt.hist(df[col], bins=10)
 
-            plt.title(f"Distribution of {col}")
+            plt.title(f"Distribution of {col} for {month_name}", fontsize=12, pad=10)
             plt.xlabel(col)
             plt.ylabel("Frequency")
 
             # Save each plot as PNG
             save_col = col.replace("/", " per ") if col == "Wind Speed (m/s)" else col
-            plt.savefig(f"outputs/distribution_{save_col}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"outputs/distribution_{save_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
             plt.close()
 
-        print("Distribution analysis completed and saved as PNG files in the 'outputs' folder.")
+            print(f"'distribution_{save_col}_for_{month_name}.png' created and saved in the 'outputs' folder.")
     except Exception as e:
         print(f"Error generating distribution analysis: {e}")
 
@@ -223,16 +224,16 @@ def correlation_analysis():
             linewidths=0.5
         )
 
-        plt.title("Correlation Heatmap")
+        plt.title(f"Correlation Heatmap for {month_name}", fontsize=12, pad=10)
 
         # Rotate x-axis labels
         plt.xticks(rotation=45, ha="right")
 
         # Save as PNG
-        plt.savefig("outputs/correlation_heatmap.png", dpi=300, bbox_inches="tight")
+        plt.savefig(f"outputs/correlation_heatmap_for_{month_name}.png", dpi=300, bbox_inches="tight")
         plt.close()
 
-        print("Correlation analysis completed and saved as 'correlation_heatmap.png' in the 'outputs' folder.")
+        print(f"'correlation_heatmap_for_{month_name}.png' created and saved in the 'outputs' folder.")
     except Exception as e:
         print(f"Error generating correlation analysis: {e}")
 
@@ -252,16 +253,16 @@ def comparative_analysis():
             fig, ax = plt.subplots(figsize=(8, 5))
             grouped[col].plot(kind="bar", ax=ax)
 
-            ax.set_title(f"Mean Comparison of {col} by {category_col}")
+            ax.set_title(f"Mean Comparison of {col} by {category_col} for {month_name}", fontsize=12, pad=10)
             ax.set_xlabel(category_col)
             ax.set_ylabel("Mean Value")
             ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
 
             # Save chart
             save_col = col.replace("/", " per ") if col == "Wind Speed (m/s)" else col
-            fig.savefig(f"outputs/Mean Comparison of {save_col} by {category_col}.png", dpi=300, bbox_inches='tight')
+            fig.savefig(f"outputs/mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            print("Comparative analysis completed and saved as PNG files in the 'outputs' folder.")
+            print(f"'mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png' created and saved in the 'outputs' folder.")
     except Exception as e:
         print(f"Error generating comparative analysis: {e}")
