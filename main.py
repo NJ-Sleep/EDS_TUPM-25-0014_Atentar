@@ -17,10 +17,11 @@ functions.descriptive_statistics()
 functions.distribution_analysis()
 functions.correlation_analysis()
 functions.comparative_analysis()
+functions.anim_plot()
 
 # Remove the functions module after execution to reduce memory usage
 del functions
 
-# ===========================================================================================================
-# ALL FINAL OUTPUTS ARE SAVED IN THE 'outputs' FOLDER. PLEASE CHECK THE FOLDER FOR ALL GENERATED PNG FILES.
-# ===========================================================================================================
+# ==================================================================================================================
+# ALL FINAL OUTPUTS ARE SAVED IN THE 'outputs' FOLDER. PLEASE CHECK THE FOLDER FOR ALL GENERATED PNG AND GIF FILES
+# ==================================================================================================================
