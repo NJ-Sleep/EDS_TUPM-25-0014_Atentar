@@ -111,6 +111,9 @@ def clean_data():
                 # If many values successfully convert, replace column
                 if converted.notnull().sum() > len(df[column]) * 0.5:
                     df[column] = converted
+
+        output_file = "data/T1_cleaned.csv"
+        df.to_csv(output_file, index=True)
         print(f"Data filtered and cleaned successfully")
     except Exception as e:
         print(f"Error correcting corrupted data types: {e}")
@@ -303,13 +306,34 @@ def comparative_analysis():
     grouped = df.groupby(category_col)[columns].mean()
     try:
         for col in columns:
-            fig, ax = plt.subplots(figsize=(8, 5))
-            grouped[col].plot(kind="bar", ax=ax)
+            fig, ax = plt.subplots(figsize=(10, 6))
 
-            ax.set_title(f"Mean Comparison of {col} by {category_col} for {month_name}", fontsize=12, pad=10)
+            # Plot bars with lower zorder so the line appears on top
+            grouped[col].plot(kind="bar", ax=ax, color="#69b3a2", alpha=0.85, zorder=2)
+
+            # Plot trend line using integer x positions to align with bar locations
+            x = np.arange(len(grouped))
+            y = grouped[col].values
+            ax.plot(
+                x,
+                y,
+                color="#ff7f0e",
+                marker="o",
+                markersize=6,
+                linewidth=2.2,
+                label="Trend Line",
+                zorder=3
+            )
+
+            # Ensure ticks align with bars and show readable labels
+            ax.set_xticks(x)
+            ax.set_xticklabels([str(d) for d in grouped.index], rotation=45, ha='right')
+
+            ax.set_title(f"Mean Comparison of {col} by {category_col} for {month_name}", fontsize=14, pad=12)
             ax.set_xlabel(category_col)
             ax.set_ylabel("Mean Value")
-            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+            ax.legend(loc="upper left")
+            ax.grid(axis="y", alpha=0.25)
 
             # Save chart
             output_dr = "outputs/comparative_analysis/"
