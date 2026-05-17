@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 
 # =======================================
@@ -159,6 +160,10 @@ def descriptive_statistics():
         table.set_fontsize(10)
         table.scale(1.6, 2)
 
+        output_dr = "outputs/"
+        if not os.path.exists(output_dr):
+            os.makedirs(output_dr)
+
         plt.savefig(
             f"outputs/descriptive_statistic_of_dataframe_for_{month_name}.png",
             bbox_inches='tight',
@@ -189,11 +194,14 @@ def distribution_analysis():
             plt.ylabel("Frequency")
 
             # Save each plot as PNG
+            output_dr = "outputs/distribution_analysis/"
+            if not os.path.exists(output_dr):
+                os.makedirs(output_dr)
             save_col = col.replace("/", " per ") if col == "Wind Speed (m/s)" else col
-            plt.savefig(f"outputs/distribution_{save_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
+            plt.savefig(f"outputs/distribution_analysis/distribution_{save_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
             plt.close()
 
-            print(f"'distribution_{save_col}_for_{month_name}.png' created and saved in the 'outputs' folder.")
+            print(f"'distribution_{save_col}_for_{month_name}.png' created and saved in the 'outputs/distribution_analysis' folder.")
     except Exception as e:
         print(f"Error generating distribution analysis: {e}")
 
@@ -229,11 +237,56 @@ def correlation_analysis():
         # Rotate x-axis labels
         plt.xticks(rotation=45, ha="right")
 
+        # Output directory for heatmap
+        output_dr = "outputs/correlation_analysis/"
+        if not os.path.exists(output_dr):
+            os.makedirs(output_dr)
+
         # Save as PNG
-        plt.savefig(f"outputs/correlation_heatmap_for_{month_name}.png", dpi=300, bbox_inches="tight")
+        plt.savefig(f"outputs/correlation_analysis/correlation_heatmap_for_{month_name}.png", dpi=300, bbox_inches="tight")
         plt.close()
 
-        print(f"'correlation_heatmap_for_{month_name}.png' created and saved in the 'outputs' folder.")
+        print(f"'correlation_heatmap_for_{month_name}.png' created and saved in the 'outputs/correlation_analysis' folder.")
+
+        for i, col in enumerate(columns):
+            x_col = numeric_df.columns[i] 
+            i = 0 if i + 1 >= len(columns) else i 
+            y_col = numeric_df.columns[i + 1]  
+            # Calculate correlation
+            correlation = numeric_df[x_col].corr(numeric_df[y_col])
+
+            # Create scatterplot
+            plt.figure(figsize=(8, 5))
+
+            sns.scatterplot(
+                data=numeric_df,
+                x=x_col,
+                y=y_col
+            )
+
+            # Add title and labels
+            plt.title(f"{x_col} vs {y_col}\nCorrelation = {correlation:.2f}")
+            plt.xlabel(x_col)
+            plt.ylabel(y_col)
+
+            # Save plot
+            output_dr = "outputs/correlation_analysis/correlation_scatterplots/"
+            if not os.path.exists(output_dr):
+                os.makedirs(output_dr)
+
+            if x_col == "Wind Speed (m/s)":
+                x_col = x_col.replace("/", " per ")
+            elif y_col == "Wind Speed (m/s)":
+                y_col = y_col.replace("/", " per ")
+            
+            plt.savefig(
+                f"outputs/correlation_analysis/correlation_scatterplots/correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png",
+                dpi=300,
+                bbox_inches="tight"
+            )
+            plt.close()
+
+            print(f"'correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png' saved in the 'outputs/correlation_analysis/correlation_scatterplots' folder.")
     except Exception as e:
         print(f"Error generating correlation analysis: {e}")
 
@@ -259,10 +312,13 @@ def comparative_analysis():
             ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
 
             # Save chart
+            output_dr = "outputs/comparative_analysis/"
+            if not os.path.exists(output_dr):
+                os.makedirs(output_dr)
             save_col = col.replace("/", " per ") if col == "Wind Speed (m/s)" else col
-            fig.savefig(f"outputs/mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
+            fig.savefig(f"outputs/comparative_analysis/mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png", dpi=300, bbox_inches='tight')
             plt.close(fig)
 
-            print(f"'mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png' created and saved in the 'outputs' folder.")
+            print(f"'mean_comparison_of_{save_col}_by_{category_col}_for_{month_name}.png' created and saved in the 'outputs/comparative_analysis' folder.")
     except Exception as e:
         print(f"Error generating comparative analysis: {e}")
