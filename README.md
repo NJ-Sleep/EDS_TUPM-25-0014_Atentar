@@ -11,7 +11,7 @@
 
 Instructions on how to run/use code
 <ul>
-      <li>Step 1: Download Data folder, function.py, and dl.py</li>
+      <li>Step 1: Download Data folder, function.py, and main.py</li>
       <li>Step 2: Look in the requirements.txt then download all required libraries</li>
       <li>Step 3: Set directory in terminal to where all downloaded files are located </li>
       <li>Step 4: Run "python main.py" in the terminal</li>
