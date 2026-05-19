@@ -164,18 +164,73 @@ def descriptive_statistics():
         table.set_fontsize(10)
         table.scale(1.6, 2)
 
-        output_dr = "outputs/"
+        output_dr = "outputs/Tables/"
         if not os.path.exists(output_dr):
             os.makedirs(output_dr)
 
         plt.savefig(
-            f"outputs/descriptive_statistic_of_dataframe_for_{month_name}.png",
+            f"outputs/Tables/descriptive_statistic_of_dataframe_for_{month_name}.png",
             bbox_inches='tight',
         )
         plt.close()
-        print(f"'descriptive_statistic_of_dataframe_for_{month_name}.png' created and saved in the 'outputs' folder.")
+        print(f"'descriptive_statistic_of_dataframe_for_{month_name}.png' created and saved in the 'outputs/Tables' folder.")
     except Exception as e:
         print(f"Error generating descriptive statistics: {e}")
+
+    # -------------------------------
+    # Create Table Figure
+    # -------------------------------
+    try:
+        print("=" * 100)
+        print("Creating table figure...")
+        fig, ax = plt.subplots(figsize=(8, 2.5))
+        df_sample = df.head(5)
+        # Remove axes
+        ax.axis('off')
+
+        # Create table
+        table = ax.table(
+            cellText=df_sample.values,
+            colLabels=df_sample.columns,
+            loc='center'
+        )
+
+        # Style
+        table.auto_set_font_size(False)
+        table.set_fontsize(9)
+        table.scale(1.3, 1.4)
+
+        # Title
+        plt.title(
+            "TABLE I - SAMPLE TELEMETRY FRAGMENTS AND EXTRACTED FEATURES",
+            fontsize=10,
+            pad=5
+        )
+
+        # Remove extra whitespace
+        plt.subplots_adjust(
+            left=0,
+            right=1,
+            top=0.85,
+            bottom=0
+        )
+        output_dr = "outputs/Tables/"
+        if not os.path.exists(output_dr):
+            os.makedirs(output_dr)
+
+        # Save table
+        plt.savefig(
+            "outputs/Tables/table_sample_telemetry.png",
+            dpi=300,
+            bbox_inches='tight',
+            pad_inches=0.1
+        )
+
+        plt.close()
+
+        print("Saved as 'table_sample_telemetry.png' in the 'outputs/Tables' folder.")
+    except Exception as e:
+        print(f"Error creating telemetry table: {e}")
 
 # =======================================
 # Distribution Analysis
@@ -208,6 +263,68 @@ def distribution_analysis():
             print(f"'distribution_{save_col}_for_{month_name}.png' created and saved in the 'outputs/distribution_analysis' folder.")
     except Exception as e:
         print(f"Error generating distribution analysis: {e}")
+
+    # =======================================
+    # Create Boxplots for Distribution Analysis
+    # =======================================
+    try:
+        for column in df.columns:
+            if column == "Date/Time":
+                continue
+            if df[column].dtype in ['int64', 'float64']:
+                numeric_df = df.select_dtypes(include=['int64', 'float64'])
+
+            # Create boxplot for all numeric variables
+            plt.figure(figsize=(12, 6))
+            plt.boxplot(numeric_df[column].values, tick_labels=[column], patch_artist=True)
+
+            plt.title(f"Boxplot {column} Analysis")
+            plt.xlabel("Variables")
+            plt.ylabel("Values")
+            plt.xticks(rotation=45)
+            plt.grid(axis='y', linestyle='--', alpha=0.7)
+        
+            output_dr = "outputs/distribution_analysis/"
+            if not os.path.exists(output_dr):
+                os.makedirs(output_dr)
+            if column == "Wind Speed (m/s)":
+                column = column.replace("/", " per ")
+            plt.savefig(
+                os.path.join(output_dr, f"boxplot_{column}.png"),
+                dpi=300,
+                bbox_inches='tight',
+                pad_inches=0.1
+            )
+            plt.tight_layout()
+            plt.close()
+    except Exception as e:
+        print(f"Error creating boxplot: {e}")
+    
+    # =======================================
+    # Combined Boxplots for Distribution Analysis
+    # =======================================
+    try:
+        numeric_df = df.select_dtypes(include=['float64', 'int64'])
+
+        plt.figure(figsize=(12, 6))
+        plt.boxplot(numeric_df.values, tick_labels=numeric_df.columns)
+
+        plt.title("Boxplot Distribution of All Signal Variables")
+        plt.xticks(rotation=45)
+        plt.grid(axis='y', linestyle='--', alpha=0.6)
+        output_dr = "outputs/distribution_analysis/"
+        if not os.path.exists(output_dr):
+            os.makedirs(output_dr)
+        plt.savefig(
+            os.path.join(output_dr, "boxplot_distribution.png"),
+            dpi=300,
+            bbox_inches='tight',
+            pad_inches=0.1
+        )
+        plt.tight_layout()
+        plt.close()
+    except Exception as e:
+        print(f"Error creating boxplot: {e}")
 
 # =======================================
 # Correlation Analysis
@@ -252,45 +369,46 @@ def correlation_analysis():
 
         print(f"'correlation_heatmap_for_{month_name}.png' created and saved in the 'outputs/correlation_analysis' folder.")
 
-        for i, col in enumerate(columns):
-            x_col = numeric_df.columns[i] 
-            i = 0 if i + 1 >= len(columns) else i 
-            y_col = numeric_df.columns[i + 1]  
-            # Calculate correlation
-            correlation = numeric_df[x_col].corr(numeric_df[y_col])
+        for k in range(len(numeric_df.columns)):
+            for j in range(k + 1, len(numeric_df.columns)):
+                print(f"Comparing {numeric_df.columns[k]} and {numeric_df.columns[j]}")
+                x_col = numeric_df[numeric_df.columns[k]]
+                y_col = numeric_df[numeric_df.columns[j]]
+                # Calculate correlation
+                correlation = numeric_df[x_col].corr(numeric_df[y_col])
 
-            # Create scatterplot
-            plt.figure(figsize=(8, 5))
+                # Create scatterplot
+                plt.figure(figsize=(8, 5))
 
-            sns.scatterplot(
-                data=numeric_df,
-                x=x_col,
-                y=y_col
-            )
+                sns.scatterplot(
+                    data=numeric_df,
+                    x=x_col,
+                    y=y_col
+                )
 
-            # Add title and labels
-            plt.title(f"{x_col} vs {y_col}\nCorrelation = {correlation:.2f}")
-            plt.xlabel(x_col)
-            plt.ylabel(y_col)
+                # Add title and labels
+                plt.title(f"{x_col} vs {y_col}\nCorrelation = {correlation:.2f}")
+                plt.xlabel(x_col)
+                plt.ylabel(y_col)
 
-            # Save plot
-            output_dr = "outputs/correlation_analysis/correlation_scatterplots/"
-            if not os.path.exists(output_dr):
-                os.makedirs(output_dr)
+                # Save plot
+                output_dr = "outputs/correlation_analysis/correlation_scatterplots/"
+                if not os.path.exists(output_dr):
+                    os.makedirs(output_dr)
 
-            if x_col == "Wind Speed (m/s)":
-                x_col = x_col.replace("/", " per ")
-            elif y_col == "Wind Speed (m/s)":
-                y_col = y_col.replace("/", " per ")
-            
-            plt.savefig(
-                f"outputs/correlation_analysis/correlation_scatterplots/correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png",
-                dpi=300,
-                bbox_inches="tight"
-            )
-            plt.close()
+                if x_col == "Wind Speed (m/s)":
+                    x_col = x_col.replace("/", " per ")
+                elif y_col == "Wind Speed (m/s)":
+                    y_col = y_col.replace("/", " per ")
+                
+                plt.savefig(
+                    f"outputs/correlation_analysis/correlation_scatterplots/correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png",
+                    dpi=300,
+                    bbox_inches="tight"
+                )
+                plt.close()
 
-            print(f"'correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png' saved in the 'outputs/correlation_analysis/correlation_scatterplots' folder.")
+                print(f"'correlation_scatterplot_{x_col}_vs_{y_col}_for_{month_name}.png' saved in the 'outputs/correlation_analysis/correlation_scatterplots' folder.")
     except Exception as e:
         print(f"Error generating correlation analysis: {e}")
 
@@ -355,55 +473,55 @@ def anim_plot():
     print("="*100)
     print("Generating animated scatter analysis...")
     try:
-       numeric_df = df.select_dtypes(include="number")
-       for i, col in enumerate(columns):
-        # Columns
-        x_col = numeric_df.columns[i]
-        i = 0 if i + 1 >= len(columns) else i
-        y_col = numeric_df.columns[i + 1]
+        numeric_df = df.select_dtypes(include="number")
+        for k in range(len(numeric_df.columns)):
+            for j in range(k + 1, len(numeric_df.columns)):
+                print(f"Comparing {numeric_df.columns[k]} and {numeric_df.columns[j]}")
+                x_col = numeric_df[numeric_df.columns[k]]
+                y_col = numeric_df[numeric_df.columns[j]]
 
-        # Create figure
-        fig, ax = plt.subplots(figsize=(8, 5))
+                # Create figure
+                fig, ax = plt.subplots(figsize=(8, 5))
 
-        # Animation function
-        def update(frame):
-            ax.clear()
+                # Animation function
+                def update(frame):
+                    ax.clear()
 
-            # Plot data up to current frame
-            current_data = numeric_df.iloc[:frame + 1]
+                    # Plot data up to current frame
+                    current_data = numeric_df.iloc[:frame + 1]
 
-            ax.scatter(
-                current_data[x_col],
-                current_data[y_col]
-            )
+                    ax.scatter(
+                        current_data[x_col],
+                        current_data[y_col]
+                    )
 
-            ax.set_title("Wind Speed vs Power Output Over Time")
-            ax.set_xlabel(x_col)
-            ax.set_ylabel(y_col)
+                    ax.set_title("{x_col} vs {y_col} (Frame {frame})".format(x_col=x_col, y_col=y_col, frame=frame + 1))
+                    ax.set_xlabel(x_col)
+                    ax.set_ylabel(y_col)
 
-        # Create animation
-        ani = FuncAnimation(
-            fig,
-            update,
-            frames=len(numeric_df),
-            interval=100,
-            repeat=False
-        )
+                # Create animation
+                ani = FuncAnimation(
+                    fig,
+                    update,
+                    frames=len(numeric_df),
+                    interval=100,
+                    repeat=False
+                )
 
-        # Save animation
-        output_dr = "outputs/comparative_analysis/animated_scatter/"
-        if not os.path.exists(output_dr):
-            os.makedirs(output_dr)
-            
-        fname_x = x_col.replace("/", " per ") if x_col == "Wind Speed (m/s)" else x_col
-        fname_y = y_col.replace("/", " per ") if y_col == "Wind Speed (m/s)" else y_col
+                # Save animation
+                output_dr = "outputs/correlation_analysis/animated_scatter/"
+                if not os.path.exists(output_dr):
+                    os.makedirs(output_dr)
+                    
+                fname_x = x_col.replace("/", " per ") if x_col == "Wind Speed (m/s)" else x_col
+                fname_y = y_col.replace("/", " per ") if y_col == "Wind Speed (m/s)" else y_col
 
-        ani.save(
-            f"outputs/comparative_analysis/animated_scatter/animated_scatter_{fname_x}_vs_{fname_y}.gif", 
-            writer="pillow")
+                ani.save(
+                    f"outputs/correlation_analysis/animated_scatter/animated_scatter_{fname_x}_vs_{fname_y}.gif", 
+                    writer="pillow")
 
-        plt.close()
+                plt.close()
 
-        print(f"Saved as 'animated_scatter_{fname_x}_vs_{fname_y}.gif' in the 'outputs/comparative_analysis/animated_scatter' folder.")
+                print(f"Saved as 'animated_scatter_{fname_x}_vs_{fname_y}.gif' in the 'outputs/correlation_analysis/animated_scatter' folder.")
     except Exception as e:
         print(f"Error generating animated scatter analysis: {e}")
