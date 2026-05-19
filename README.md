@@ -1,13 +1,13 @@
-==================================
+======================================================================
 <h1>COMPROG FINAL PROJECT: Engineering Data Systems Pipeline 2026<\h1>
-<div>Topic: REN-01: Power Curve Deviation (Search: "Wind Turbine Scada Dataset")</div>
+<h2>Topic: REN-01: Power Curve Deviation (Search: "Wind Turbine Scada Dataset")</h2>
 </div>Title of Paper: Automated Power Curve Deviation Analysis of Wind Turbines SCADA data Using Python Pipelines</div>
-============================================================================================================
+
 <img width="392" height="394" alt="1A-Atentar" src="https://github.com/user-attachments/assets/82c896ff-4ffc-4d93-a90c-1d7860a82dc9" />
 
-Student: Atentar, Neri Josh O.
-Section: BSECE-1A
-Student ID: TUPM-25-0014
+<p>Student: Atentar, Neri Josh O.</p>
+<p>Section: BSECE-1A</p>
+<p>Student ID: TUPM-25-0014</p?>
 
 Instructions on how to run/use code
 <ul>
