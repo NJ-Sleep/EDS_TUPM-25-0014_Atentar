@@ -16,6 +16,7 @@ Instructions on how to run/use code
       <li>Step 3: Set directory in terminal to where all downloaded files are located </li>
       <li>Step 4: Run "python main.py" in the terminal</li>
       <li>Step 5: Enter a digit from 1-12 to get data for specific month</li>
+      <li>Step 6: Wait for the code to finish running and all analyzed data can be found in a created output folder</li>
       <li>
             <p>
                   Note: The csv file can have more arrays added to it and the code will work fine
@@ -23,4 +24,6 @@ Instructions on how to run/use code
                   instead just a message an error occured. 
             </p>
       </li>
+      <h3>Contact me</h3>
+      <li>Facebook:<a>https://www.facebook.com/nerijosh.atentar.9</a></li>
 </ul>
